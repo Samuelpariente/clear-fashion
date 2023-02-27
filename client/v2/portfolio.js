@@ -113,6 +113,37 @@ const getmaxproduct = async(page ,size , brand, recent, price,Val) => {
 	return products;
 	};
 	
+const getfilteredproduct = async(brand, recent, price,Val) => {
+	const max =  await fetchProducts(1,12);
+	const maxi = max.meta.count;
+	let products = await fetchProducts(1,maxi);
+	if (brand !== null && brand !== "") {
+		products = filterByBrand(products,brand);
+    }
+	if(recent == true){
+			products =  filterRecentResults(products)
+			
+		}
+	
+	if(price == true){
+		products = filterLowPriceResults(products);
+	}
+	if (Val == "price-asc"){
+		products = sortResultsByPriceAscending(products);
+	}
+	if (Val == "price-desc"){
+		products = sortResultsByPriceDescending(products);
+	}
+	if (Val == "date-desc"){
+		products = sortResultsByDateDescending(products);
+	}
+	if (Val == "date-asc"){
+		products = sortResultsByDateAscending(products);
+	}
+
+	return products;
+	};
+	
 
 const fetchBrands = async () => {
   try {
@@ -162,38 +193,34 @@ const renderProducts = products => {
   sectionProducts.appendChild(fragment);
 };
 
-
-
-
 /**
  * Render page selector
  * @param  {Object} pagination
  */
+ 
+let selectedpage = 1;
 
-const renderPagination = pagination => {
-  const {currentPage, pageCount} = pagination;
+const renderPagination = filteredproducts => {
+  const pageCount = Math.ceil(filteredproducts.result.length/selectShow.value);
   const options = Array.from(
     {'length': pageCount},
     (value, index) => `<option value="${index + 1}">${index + 1}</option>`
   ).join('');
-
   selectPage.innerHTML = options;
-  selectPage.selectedIndex = currentPage - 1;
+  selectPage.selectedIndex = selectedpage - 1;
 };
 
 /**
  * Render page selector
  * @param  {Object} pagination
  */
-const renderIndicators = pagination => {
-  const {count} = pagination;
-
+const renderIndicators = products => {
+  const count = products.result.length;
   spanNbProducts.innerHTML = count;
   countRecent(count);
   countbrand();
   pvalue();
   lastrelease();
-  
 };
 
 const renderBrandSelect = brands => {
@@ -205,10 +232,10 @@ const renderBrandSelect = brands => {
 };
 
 
-const render = (products, pagination, brand) => {
+const render = (products, filteredproduct, brand) => {
   renderProducts(products);
-  renderPagination(pagination);
-  renderIndicators(pagination);
+  renderPagination(filteredproduct);
+  renderIndicators(filteredproduct);
   const brandHeading = document.createElement('h2');
   if (brand) {
     brandHeading.textContent = `Products for ${brand}`;
@@ -232,8 +259,16 @@ const render = (products, pagination, brand) => {
 	sortVal.value
   );
   
+  console.log(currentPagination);
+  
+  const filteredproduct = await getfilteredproduct(
+    selectBrand.value,
+	recentCheckbox.checked,
+	priceCheckbox.checked,
+	sortVal.value);
+  
   setCurrentProducts(products);
-  render(currentProducts, currentPagination, selectBrand.value);
+  render(currentProducts, filteredproduct, selectBrand.value);
 });
 
 
@@ -242,6 +277,7 @@ const render = (products, pagination, brand) => {
  */
 selectPage.addEventListener('change', async (event) => {
   const page = parseInt(event.target.value);
+  selectedpage = page;
   let products = await getmaxproduct(
     page,
 	selectShow.value,
@@ -250,8 +286,14 @@ selectPage.addEventListener('change', async (event) => {
 	priceCheckbox.checked,
 	sortVal.value);
 
+  const filteredproduct = await getfilteredproduct(
+    selectBrand.value,
+	recentCheckbox.checked,
+	priceCheckbox.checked,
+	sortVal.value);
+  
   setCurrentProducts(products);
-  render(currentProducts, currentPagination, selectBrand.value);
+  render(currentProducts, filteredproduct, selectBrand.value);
   
 });
 
@@ -269,7 +311,14 @@ selectBrand.addEventListener('change', async (event) => {
 	sortVal.value
   );
   setCurrentProducts(products);
-  render(currentProducts, currentPagination, event.target.value);
+  
+  const filteredproduct = await getfilteredproduct(
+    event.target.value,
+	recentCheckbox.checked,
+	priceCheckbox.checked,
+	sortVal.value);
+  
+  render(currentProducts, filteredproduct, event.target.value);
 });
 
 /**
@@ -279,7 +328,14 @@ selectBrand.addEventListener('change', async (event) => {
 document.addEventListener('DOMContentLoaded', async () => {
   let products = await fetchProducts();
   setCurrentProducts(products);
-  render(currentProducts, currentPagination);
+  
+  const filteredproduct = await getfilteredproduct(
+    selectBrand.value,
+	recentCheckbox.checked,
+	priceCheckbox.checked,
+	sortVal.value);
+  
+  render(products.result, filteredproduct);
 });
 
 /**
@@ -303,8 +359,14 @@ recentCheckbox.addEventListener('click',async () => {
 		sortVal.value
 		);
 		
+		const filteredproduct = await getfilteredproduct(
+			selectBrand.value,
+			recentCheckbox.checked,
+			priceCheckbox.checked,
+			sortVal.value);
+		  
 		setCurrentProducts(products);
-		render(currentProducts, currentPagination, selectBrand.value);
+		render(currentProducts, filteredproduct, selectBrand.value);
 })
 
 
@@ -319,8 +381,14 @@ priceCheckbox.addEventListener('click',async () => {
 		priceCheckbox.checked,
 		sortVal.value
 		);
-		setCurrentProducts(products);
-		render(currentProducts, currentPagination, selectBrand.value);
+		
+		const filteredproduct = await getfilteredproduct(
+			selectBrand.value,
+			recentCheckbox.checked,
+			priceCheckbox.checked,
+			sortVal.value);
+		 setCurrentProducts(products);
+		 render(currentProducts, filteredproduct, selectBrand.value);
 })
 
 sortVal.addEventListener('change', async () => {
@@ -333,8 +401,14 @@ sortVal.addEventListener('change', async () => {
 		priceCheckbox.checked,
 		sortVal.value
 		);
-		setCurrentProducts(products);
-		render(currentProducts, currentPagination, selectBrand.value);
+	const filteredproduct = await getfilteredproduct(
+		selectBrand.value,
+		recentCheckbox.checked,
+		priceCheckbox.checked,
+		sortVal.value);
+  
+  setCurrentProducts(products);
+  render(currentProducts, filteredproduct, selectBrand.value);
 });
 
 function filterRecentResults(data) {
@@ -473,15 +547,13 @@ function getLastReleasedProduct(data) {
 
 
 async function lastrelease(){
-	const products = await fetchProducts(
-    currentPagination.currentPage,
-    selectShow.value,
+	const filteredproduct = await getfilteredproduct(
     selectBrand.value,
 	recentCheckbox.checked,
 	priceCheckbox.checked,
-	sortVal.value
-    );
-	const latestRelease = getLastReleasedProduct(products);
+	sortVal.value);
+	
+	const latestRelease = getLastReleasedProduct(filteredproduct);
 	last.innerHTML  = latestRelease.released;
 	
 }
@@ -497,3 +569,4 @@ function filterByBrand(input, brand) {
   const filteredItems = input.result.filter(item => item.brand === brand);
   return { result: filteredItems, meta: input.meta };
 }
+
