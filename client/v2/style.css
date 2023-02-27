@@ -30,7 +30,7 @@ border-radius: 5px;
 /* Label styles */
 label {
 display: inline-block;
-margin-right: 2em;
+margin-right: 0.5em;
 font-size: 1.1em;
 font-weight: 500;
 }
@@ -40,7 +40,7 @@ select {
 display: inline-block;
 font-size: 1em;
 padding: 0.5em;
-margin-right: 1em;
+margin-right: 0.5em;
 border: 1px solid #ccc;
 border-radius: 0.3em;
 background-color: #f7f7f7;
@@ -69,13 +69,13 @@ gap: 0.5rem;
 /* Brand select styles */
 #brand-select {
 width: 8em;
-margin-right: 1em;
+margin-right: 0.5em;
 font-size: 1.1em;
 }
 
 /* Sort select styles */
 #sort-select {
-width: 9em;
+width: 8em;
 font-size: 1.1em;
 }
 
