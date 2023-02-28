@@ -6,47 +6,21 @@ const cheerio = require('cheerio');
  * @param  {String} data - html response
  * @return {Array} products
  */
-const parse = data => {
-  const $ = cheerio.load(data);
+ 
 
-  return $('.productList-container .productList')
-    .map((i, element) => {
-      const name = $(element)
-        .find('.productList-title')
-        .text()
-        .trim()
-        .replace(/\s/g, ' ');
-      const price = parseInt(
-        $(element)
-          .find('.productList-price')
-          .text()
-      );
 
-      return {name, price};
-    })
-    .get();
-};
-
-/**
- * Scrape all the products for a given url page
- * @param  {[type]}  url
- * @return {Array|null}
- */
-module.exports.scrape = async url => {
-  try {
-    const response = await fetch(url);
-
-    if (response.ok) {
-      const body = await response.text();
-
-      return parse(body);
-    }
-
-    console.error(response);
-
-    return null;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-};
+module.exports.GetAll = async() => {
+	const rep = await fetch('https://www.dedicatedbrand.com/en/loadfilter');
+	const { products } = await rep.json();
+	const filteredProducts = products.filter(data => Object.keys(data).length > 0);
+  
+	  const transformedProducts = filteredProducts.map(data => ({
+		name: data.name,
+		brand: "Dedicated",
+		price: data.price.priceAsNumber,
+		image: data.image[0],
+		link: "https://www.dedicatedbrand.com/en/" + data['canonicalUri']
+	  }));
+  
+  return transformedProducts;
+}
