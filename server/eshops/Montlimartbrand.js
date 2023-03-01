@@ -7,51 +7,32 @@ const cheerio = require('cheerio');
  * @return {Array} products
  */
 
-const parse = async data => {
+const parse = async (data) => {
   const $ = cheerio.load(data);
 
-  const products = await Promise.all( $('.products-list__block')
-    .map(async(i, elt) => {
-      const name = $(elt)
-        .find('.text-reset')
-        .text()
-        .trim()
-        .replace(/\s/g, ' ');
-		
-	  const brand = "Montlimart";
-		
-      const price = parseInt(
-        $(elt)
-          .find('.price')
-          .text()
-      );
-	  
-	  const link = $(elt)
-        .find('.product-miniature__thumb-link')
-        .attr('href');
+  const products = await Promise.all(
+    $(".products-list__block").map(async (i, elt) => {
+      const name = $(elt).find(".text-reset").text().trim().replace(/\s+/g, " ");
+      const brand = "Montlimart";
+      const price = parseInt($(elt).find(".price").text(), 10);
+      const link = $(elt).find(".product-miniature__thumb-link").attr("href");
+      let image = "";
 
-      var image = "";
-	  
-      if($(elt).find('video').length > 0) {
-        await fetch(link).then(async response => {
-          await response.text().then(async body => {
-            const $b = cheerio.load(body);
-            image = $b('img')[0].attribs['data-src'];
-          })
-        })
+      if ($(elt).find("video").length > 0) {
+        const response = await fetch(link);
+        const body = await response.text();
+        const $b = cheerio.load(body);
+        image = $b("img")[0].attribs["data-src"];
+      } else {
+        image = $(elt).find(".product-miniature__thumb img")[0].attribs["data-src"];
       }
-      else {
-        image = $(elt)
-          .find('.product-miniature__thumb img')[0].attribs['data-src'];
-      }
-	  
-	  
-	  
-      return {name,brand,price,image,link};
-    })
-    .get());
-	const filteredproducts = products.filter(product => !product.name.includes("CADEAU"));
-	return filteredproducts;
+
+      return { name, brand, price, image, link };
+    }).get()
+  );
+
+  const filteredProducts = products.filter((product) => !product.name.includes("CADEAU"));
+  return filteredProducts;
 };
 
 /**
