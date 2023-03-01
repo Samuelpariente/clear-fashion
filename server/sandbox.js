@@ -46,6 +46,12 @@ async function Scrap(){
 	   temp = await sandbox(brands[i]);
 	   products = products.concat(temp);
 	}
-	// console.log(products);
+	const myJsonString = JSON.stringify(products);
+	var fs = require('fs');
+	fs.writeFile("products.json", myJsonString, function(err) {
+		if (err) {
+			console.log(err);
+		}
+});
 }
 Scrap();
