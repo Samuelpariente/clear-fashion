@@ -6,7 +6,7 @@ const cheerio = require('cheerio');
  * @param  {String} data - html response
  * @return {Array} products
  */
- 
+const scrapedate = Date.now();
 
 
 module.exports.GetAll = async() => {
@@ -19,7 +19,8 @@ module.exports.GetAll = async() => {
 		brand: "Dedicated",
 		price: data.price.priceAsNumber,
 		image: data.image[0],
-		link: "https://www.dedicatedbrand.com/en/" + data['canonicalUri']
+		link: "https://www.dedicatedbrand.com/en/" + data['canonicalUri'],
+		date : scrapedate
 	  }));
   
   return transformedProducts;

@@ -18,11 +18,13 @@ async function ToDatabase(products) {
 	
 	
 	const collection = db.collection('products');
+	collection.drop();
 	
 	
 	
     const result = collection.insertMany(products);
     console.log(result);
+	client.close();
 }
 
 

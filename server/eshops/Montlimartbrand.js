@@ -1,6 +1,8 @@
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 
+
+ const scrapedate = Date.now();
 /**
  * Parse webpage e-shop
  * @param  {String} data - html response
@@ -27,7 +29,7 @@ const parse = async (data) => {
         image = $(elt).find(".product-miniature__thumb img")[0].attribs["data-src"];
       }
 
-      return { name, brand, price, image, link };
+      return { name, brand, price, image, link, scrapedate };
     }).get()
   );
 

@@ -1,5 +1,6 @@
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
+const scrapedate = Date.now();
 
 
 
@@ -20,7 +21,7 @@ const parse = (data) => {
       .find("img")
       .attr("src");
 
-    return { name, price, link, image };
+    return { name, price, link, image ,scrapedate};
   }).get();
 };
 
