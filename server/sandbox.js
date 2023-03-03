@@ -3,9 +3,27 @@ const dedicatedbrand = require('./eshops/dedicatedbrand');
 const montlimartbrand = require('./eshops/Montlimartbrand');
 const circlebrand = require('./eshops/circlebrand');
 
-
+const {MongoClient} = require('mongodb');
+const MONGODB_DB_NAME = 'clearfashion';
 
 const brands = ['Dedicated','Montlimart','Circle'];
+
+
+async function ToDatabase(products) {	
+
+	const uri = 'mongodb+srv://samuel:R2WkLjmO9ENfMtMw@clearfashion.dv6hbxy.mongodb.net/?retryWrites=true&w=majority';
+	const MONGODB_DB_NAME = 'clearfashion';
+	const client = await MongoClient.connect(uri, {'useNewUrlParser': true});
+	const db =  client.db(MONGODB_DB_NAME);
+	
+	
+	const collection = db.collection('products');
+	
+	
+	
+    const result = collection.insertMany(products);
+    console.log(result);
+}
 
 
 async function sandbox (eshop) {
@@ -46,6 +64,9 @@ async function Scrap(){
 	   temp = await sandbox(brands[i]);
 	   products = products.concat(temp);
 	}
+	
+	await ToDatabase(products);
+	
 	const myJsonString = JSON.stringify(products);
 	var fs = require('fs');
 	fs.writeFile("products.json", myJsonString, function(err) {
