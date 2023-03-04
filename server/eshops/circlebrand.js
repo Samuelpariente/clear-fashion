@@ -20,8 +20,8 @@ const parse = (data) => {
     const image = "https:" + $(element)
       .find("img")
       .attr("src");
-
-    return { name, price, link, image ,scrapedate};
+	const brand = "Circle"
+    return { name, brand, price, link, image ,scrapedate};
   }).get();
 };
 

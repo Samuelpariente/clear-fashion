@@ -1,7 +1,7 @@
 const {MongoClient} = require('mongodb');
 const MONGODB_DB_NAME = 'clearfashion';
  
-const brand = 'Montlimart';
+const brand = 'Circle';
 const price = 40;
 
 
@@ -75,4 +75,4 @@ async function FindsortedbyRecentDate() {
 }
 
 
-FindsortedbyDate();
+FindByBrand(brand);
