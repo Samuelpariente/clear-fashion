@@ -1,5 +1,17 @@
 {
   "version": 2,
-  "builds": [{"src": "*.js", "use": "@now/node"}],
-  "routes": [{"src": "/(.*)", "dest": "api.js"}]
+  "builds": [
+    {
+      "src": "api.js",
+      "use": "@now/node"
+    }
+  ],
+  "routes": [
+    {
+      // Specify which paths will route to a destination using a regex
+      "src": "/(.*)",
+      // Specify the paths' destination
+      "dest": "api.js"
+    }
+  ]
 }
