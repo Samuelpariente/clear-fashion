@@ -60,7 +60,7 @@ async function FindsortedbyDate() {
 	console.log(result);
 }
 
-async function FindsortedbyDate() {	
+async function FindsortedbyRecentDate() {	
 
 	const uri = 'mongodb+srv://samuel:R2WkLjmO9ENfMtMw@clearfashion.dv6hbxy.mongodb.net/?retryWrites=true&w=majority';
 	const MONGODB_DB_NAME = 'clearfashion';
