@@ -83,5 +83,6 @@ app.listen(PORT);
 
 console.log(`📡 Running on port ${PORT}`);
 
+module.exports = app;
 
 // test "64030712734d4b2b5ec45ccb"
