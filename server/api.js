@@ -18,7 +18,7 @@ app.use(helmet());
 
 app.options('*', cors());
 
-app.get('/', async (request, response) => {
+app.get('/', (request, response) => {
   
  response.send({reponse : "alive"});
   
