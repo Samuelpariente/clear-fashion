@@ -18,6 +18,13 @@ app.use(helmet());
 
 app.options('*', cors());
 
+app.get('/', async (request, response) => {
+  
+ response.send({reponse : "alive"});
+  
+  
+});
+
 app.get('/products/search', async (request, response) => {
   try{
 	  const uri = 'mongodb+srv://samuel:R2WkLjmO9ENfMtMw@clearfashion.dv6hbxy.mongodb.net/?retryWrites=true&w=majority';
