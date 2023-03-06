@@ -34,7 +34,7 @@ app.get('/brands', async (request, response) => {
 	  const db =  client.db(MONGODB_DB_NAME);
 	  const collection = db.collection('products');
 	  
-	  searchresult = await collection.distinct('brand').toArray();
+	  searchresult = await collection.distinct('brand');
 	  response.send(searchresult);
   } catch(e){
 	  response.send({error : "invalid search"});  
