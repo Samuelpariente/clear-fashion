@@ -221,7 +221,7 @@ const renderPagination = filteredproducts => {
 const renderIndicators = products => {
   const count = products.result.length;
   spanNbProducts.innerHTML = count;
-  indicator();
+  indicator(products);
 };
 
 const renderBrandSelect = brands => {
@@ -558,8 +558,7 @@ function filterByBrand(input, brand) {
   return { result: filteredItems, meta: input.meta };
 }
 
-async function indicator(){
-	const products = await fetchProducts(10000);
+async function indicator(products){
 	lastrelease(products);
 	countRecent(products);
 	countbrand();
