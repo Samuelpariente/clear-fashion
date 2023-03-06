@@ -35,7 +35,7 @@ app.get('/brands', async (request, response) => {
 	  const collection = db.collection('products');
 	  
 	  searchresult = await collection.distinct('brand');
-	  response.send(searchresult);
+	  response.send({result : searchresult});
   } catch(e){
 	  response.send({error : "invalid search"});  
   }
@@ -65,7 +65,7 @@ app.get('/products/search', async (request, response) => {
 		numPerPage = 12;
 	  }
 	  searchresult = await collection.find(query).limit(parseInt(numPerPage)).toArray();
-	  response.send(searchresult);
+	  response.send({result : searchresult});
   } catch(e){
 	  response.send({error : "invalid search"});  
   }
@@ -85,7 +85,7 @@ app.get('/products/:id', async (request, response) => {
 	  
 	  const productId = request.params.id;
 	  const searchresult = await collection.findOne({_id: ObjectId(productId)});
-	  response.send(searchresult);
+	  response.send({result : searchresult});
   } catch(e){
 	  response.send({error : "invalid id"});  
   }

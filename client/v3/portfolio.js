@@ -50,7 +50,6 @@ const last = document.querySelector("#last");
  
 const setCurrentProducts = ({result, meta}) => {
   currentProducts = result;
-  currentPagination = meta;
 };
 
 /**
@@ -66,7 +65,7 @@ const fetchProducts = async (limit,brand,price) => {
     const response = await fetch(url);
     const body = await response.json();
 
-    if (body.success !== true) {
+    if (body.status !== 200) {
       console.error(body);
       return {currentProducts, currentPagination};
     }
@@ -92,10 +91,13 @@ const getmaxproduct = async(page,size,brand,recent,price,Val) => {
 	const toshowmax = page*size;
 	
 	if(recent == true){
-			products = fetchProducts(10000);
+			product = fetchProducts(10000);
 			products =  filterRecentResults(products)
 		}
 	
+	if(price == true){
+		products = filterLowPriceResults(products);
+	}
 	if (Val == "price-asc"){
 		products = sortResultsByPriceAscending(products);
 	}
@@ -112,19 +114,47 @@ const getmaxproduct = async(page,size,brand,recent,price,Val) => {
 	products = toshow(toshowmin,toshowmax,products);
 	return products;
 	};
+	
+const getfilteredproduct = async(brand, recent, price,Val) => {
+	let products = [];
+	if (price == true){
+		products = await fetchProducts(10000,brand,50);
+	}else{
+		products = await fetchProducts(10000,brand);
+	}
 
+	if(recent == true){
+			products =  filterRecentResults(products)
+			
+		}
+	
+	if (Val == "price-asc"){
+		products = sortResultsByPriceAscending(products);
+	}
+	if (Val == "price-desc"){
+		products = sortResultsByPriceDescending(products);
+	}
+	if (Val == "date-desc"){
+		products = sortResultsByDateDescending(products);
+	}
+	if (Val == "date-asc"){
+		products = sortResultsByDateAscending(products);
+	}
+
+	return products;
+	};
+	
 
 const fetchBrands = async () => {
   try {
-    const response = await fetch('https://clear-fashion-api.vercel.app/brands');
-    const body = await response.json();
+    const body = await fetch('https://clear-fashion-rose.vercel.app/brands');
 
-    if (body.success !== true) {
+    if (body.status !== 200) {
       console.error(body);
       return [];
     }
 
-    return body.data;
+    return body;
   } catch (error) {
     console.error(error);
     return [];
@@ -193,7 +223,8 @@ const renderIndicators = products => {
 };
 
 const renderBrandSelect = brands => {
-  const brandNames = Object.values(brands)[0];
+  const brandNames = brands;
+  console.log(brandNames);
   const options = brandNames
     .map(name => `<option value="${name}">${name}</option>`)
     .join('');
