@@ -25,6 +25,23 @@ app.get('/', (request, response) => {
   
 });
 
+
+app.get('/brands', async (request, response) => {
+  try{
+	  const uri = 'mongodb+srv://samuel:R2WkLjmO9ENfMtMw@clearfashion.dv6hbxy.mongodb.net/?retryWrites=true&w=majority';
+	  const MONGODB_DB_NAME = 'clearfashion';
+	  const client = await MongoClient.connect(uri, {'useNewUrlParser': true});
+	  const db =  client.db(MONGODB_DB_NAME);
+	  const collection = db.collection('products');
+	  
+	  searchresult = await collection.distinct('brand').toArray();
+	  response.send(searchresult);
+  } catch(e){
+	  response.send({error : "invalid search"});  
+  }
+  
+});
+
 app.get('/products/search', async (request, response) => {
   try{
 	  const uri = 'mongodb+srv://samuel:R2WkLjmO9ENfMtMw@clearfashion.dv6hbxy.mongodb.net/?retryWrites=true&w=majority';

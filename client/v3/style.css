@@ -1,0 +1,220 @@
+/* Body styles */
+body {
+font-family: SF Pro Display, Helvetica Neue, Helvetica, Arial, sans-serif;
+background-color: #f7f7f7;
+color: #1c1c1c;
+margin: 0;
+padding: 0;
+}
+
+/* Page title styles */
+h1 {
+font-size: 3em;
+text-align: center;
+margin: 0;
+padding: 2em;
+background-color: #1c1c1c;
+color: #fff;
+border-bottom: 1px solid #333;
+}
+
+/* Section styles */
+section {
+margin: 2em;
+padding: 2em;
+background-color: #f7f7f7;
+border: 1px solid #e5e5e5;
+border-radius: 5px;
+}
+
+/* Label styles */
+label {
+display: inline-block;
+margin-right: 0.5em;
+font-size: 1.1em;
+font-weight: 500;
+}
+
+/* Select styles */
+select {
+display: inline-block;
+font-size: 1em;
+padding: 0.5em;
+margin-right: 0.5em;
+border: 1px solid #ccc;
+border-radius: 0.3em;
+background-color: #f7f7f7;
+color: #1c1c1c;
+appearance: none;
+-webkit-appearance: none;
+-moz-appearance: none;
+cursor: pointer;
+}
+
+/* Checkbox styles */
+input[type="checkbox"] {
+display: inline-block;
+margin-right: 0.5em;
+}
+
+/* Container styles */
+#show {
+display: flex;
+justify-content: space-between;
+align-items: center;
+flex-wrap: wrap;
+gap: 0.5rem;
+}
+
+/* Brand select styles */
+#brand-select {
+width: 8em;
+margin-right: 0.5em;
+font-size: 1.1em;
+}
+
+/* Sort select styles */
+#sort-select {
+width: 8em;
+font-size: 1.1em;
+}
+
+/* Responsive styles */
+@media (max-width: 600px) {
+h1 {
+	font-size: 2.5em;
+	padding: 1.5em;
+	}
+section {
+	margin: 1em;
+	padding: 1em;
+	}
+#show {
+	flex-direction: column;
+	align-items: flex-start;
+	}
+#brand-select {
+	margin-bottom: 1em;
+	}
+}
+
+/* Indicators section styles */
+#indicators {
+  margin-top: 1em;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 1em;
+  background-color: #f5f5f5;
+  padding: 1em;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,.1);
+}
+
+/* Indicator styles */
+#indicators div {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2em;
+  color: #333;
+  background-color: #fff;
+  padding: 1em;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,.1);
+}
+
+/* Products section styles */
+#products {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 1em;
+  margin-top: 1em;
+  justify-content: flex-start;
+}
+
+/* Product card styles */
+.product {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 20px; 
+  border: 1px solid #dcdcdc;
+  border-radius: 5px;
+}
+
+.product span:first-child {
+  font-weight: bold;
+  margin-right: 10px; /* add margin to the right of the first child element */
+}
+
+.product span{
+  min-width: 45px; /* add margin to the right of the first child element */
+}
+
+
+.product a {
+  color: #333;
+  text-decoration: none;
+  margin-left: 10px;
+  min-width: 300px; /* add max-width */
+  overflow: hidden; /* hide overflow */
+  text-overflow: ellipsis; /* add ellipsis for text that overflows */
+}
+
+.product a:hover {
+  text-decoration: underline;
+}
+
+
+.product input[type="checkbox"] {
+  display: none;
+}
+
+.product .heart:before {
+  content: "\2661";
+  font-size: 24px;
+  color: black;
+}
+
+.product input[type="checkbox"]:checked + .heart:before {
+  content: "\2665";
+  color: #f44336;
+}
+In this example, I've added a max-width property of 150px to the a element, which limits the
+
+
+
+
+.product input[type="checkbox"] {
+  display: none;
+  margin-right: 20px; /* add margin to the right of the checkbox */
+}
+
+.product .heart:before {
+  content: "\2661";
+  font-size: 24px;
+  color: black;
+  margin-left: 20px; /* add margin to the left of the heart icon */
+}
+
+.product input[type="checkbox"]:checked + .heart:before {
+  content: "\2665";
+  color: #f44336;
+}
+
+
+
+/* Button styles */
+button {
+  background-color: #333;
+  color: #fff;
+  border: none;
+  padding: 0.5em 1em;
+  cursor: pointer;
+  font-size: 0.8em;
+  border-radius: 0.3em;
+}
+
+button:hover {
+  background-color: #666;
+}
