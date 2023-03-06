@@ -91,9 +91,9 @@ const fetchProducts = async (limit = 12,brand,price) => {
 const getmaxproduct = async(page,size,brand,recent,price,Val) => {
 	let products = [];
 	if (price == true){
-		products = await fetchProducts(page*size,brand,50);
+		products = await fetchProducts(10000,brand,50);
 	}else{
-		products = await fetchProducts(page*size,brand);
+		products = await fetchProducts(10000,brand);
 	}
 	
 	const toshowmin = page*size - size;
