@@ -251,7 +251,7 @@ const render = (products, filteredproduct, brand) => {
  */
 
  selectShow.addEventListener('change', async (event) => {
-	 
+	loading ();
   let products = await getmaxproduct(
     selectedpage,
     parseInt(event.target.value),
@@ -278,6 +278,7 @@ const render = (products, filteredproduct, brand) => {
  * Select the page to display
  */
 selectPage.addEventListener('change', async (event) => {
+	loading ();
   const page = parseInt(event.target.value);
   selectedpage = page;
   let products = await getmaxproduct(
@@ -306,6 +307,7 @@ selectPage.addEventListener('change', async (event) => {
  */
 
 selectBrand.addEventListener('change', async (event) => {
+	loading ();
   let products = await getmaxproduct(
     selectedpage,
     selectShow.value,
@@ -330,6 +332,7 @@ selectBrand.addEventListener('change', async (event) => {
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
+  loading ();
   let products = await fetchProducts();
   
   setCurrentProducts(products);
@@ -354,7 +357,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
 recentCheckbox.addEventListener('click',async () => {
-	
+		loading();
 		let products = await getmaxproduct(
 		selectedpage,
 		selectShow.value,
@@ -377,7 +380,7 @@ recentCheckbox.addEventListener('click',async () => {
 
 
 priceCheckbox.addEventListener('click',async () => {
-	
+		loading ();
 		let products = await getmaxproduct(
 		selectedpage,
 		selectShow.value,
@@ -397,7 +400,7 @@ priceCheckbox.addEventListener('click',async () => {
 })
 
 sortVal.addEventListener('change', async () => {
-	 
+	 loading ();
     let products = await getmaxproduct(
 		selectedpage,
 		selectShow.value,
@@ -565,3 +568,19 @@ async function indicator(products){
 	countbrand();
 	pvalue(products);
 }
+
+function loading (){
+  const fragment = document.createDocumentFragment();
+  const div = document.createElement('div');
+  const template = `
+  <div class="progress">
+  <div class="color"></div>
+</div>
+    `;
+
+
+  div.innerHTML = template;
+  fragment.appendChild(div);
+  sectionProducts.innerHTML = '';
+  sectionProducts.appendChild(fragment);
+};
