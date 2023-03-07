@@ -167,7 +167,9 @@ section {
   margin-left: 10px;
   min-width: 300px; /* add max-width */
   overflow: hidden; /* hide overflow */
-  text-overflow: ellipsis; /* add ellipsis for text that overflows */
+  text-overflow: ellipsis;
+	align-items: center;
+  text-align: center;  /* add ellipsis for text that overflows */
 }
 
 .product a:hover {
