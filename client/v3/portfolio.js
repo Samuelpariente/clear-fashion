@@ -178,7 +178,8 @@ const renderProducts = products => {
   const template = products
     .map(product => {
       return `
-      <div class="product" id=${product.uuid}>
+      <div class="product" id=${product._id}>
+		<a><img src="${product.image}"></a>
         <span>${product.brand}</span>
         <a target="_blank" href="${product.link}">${product.name}</a>
         <span>${product.price} €</span>
