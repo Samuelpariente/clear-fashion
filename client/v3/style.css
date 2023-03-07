@@ -160,6 +160,7 @@ section {
   text-align: center;
 }
 
+
 .product a {
   color: #333;
   text-decoration: none;
@@ -175,7 +176,7 @@ section {
 
 
 .product input[type="checkbox"] {
-  position: absolute;
+  display: none;
 }
 
 .product .heart:before {
