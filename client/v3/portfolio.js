@@ -39,6 +39,7 @@ const p50 = document.querySelector("#p50");
 const p90 = document.querySelector("#p90");
 const p95 = document.querySelector("#p95");
 const last = document.querySelector("#last");
+const favCheckbox = document.querySelector('#favCheckbox');
 
 /**
  * Set global value
@@ -166,25 +167,60 @@ const fetchBrands = async () => {
   }
 };
 
+const fetchfavorit = async(listfav) =>{
+	let products = [];
+	try {
+	for (let i = 0; i < listfav.length; i++) {
+	 const response = await fetch(`https://clear-fashion-rose.vercel.app/products/${listfav[i]}`);
+	 const body = await response.json(); 
+     products.push(body.result);	 
+	}
+    
+
+    return products;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+	
+	
+}
+
 /**
  * Render list of products
  * @param  {Array} products
  */
  
+let favList = [];
+const pull = JSON.parse(localStorage.getItem("favList"));
+if (pull !=null){
+	favList = pull;
+}
  
 const renderProducts = products => {
   const fragment = document.createDocumentFragment();
   const div = document.createElement('div');
+  
+  
+  
   const template = products
-    .map(product => {
+    .map(product =>
+
+	{
+		let checkString = "";
+     if(favList.includes(`${product._id}`)){
+        checkString = "checked";
+     }
+		
+		
       return `
-      <div class="product" id=${product._id}>
+      <div class="product" id=ID-${product._id}>
 		<a><img src="${product.image}"></a>
         <span>${product.brand}</span>
         <a target="_blank" href="${product.link}">${product.name}</a>
         <span>${product.price} €</span>
 		<label>
-			<input type="checkbox" name="fav" id=${product.uuid}>
+			<input class="fav-heart" type="checkbox" name="fav" id=${product._id} ${checkString}>
 			<span class="heart"></span>
 		 </label>
       </div>
@@ -238,6 +274,31 @@ const render = (products, filteredproduct, brand) => {
   renderProducts(products);
   renderPagination(filteredproduct);
   renderIndicators(filteredproduct);
+  const checkboxes = document.querySelectorAll('.fav-heart');
+  checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', event => {
+      const checkboxId = event.target.id;
+      if (event.currentTarget.checked) {favList.push(checkboxId);}
+      else{
+        let i = 0;
+        while (i < favList.length) {
+          if (favList[i] === checkboxId) {
+            favList.splice(i, 1);
+          } 
+          else {
+            ++i;
+          }
+        }
+      }
+      
+      
+      localStorage.setItem('favList', JSON.stringify(favList));
+	  console.log(favList);
+    });
+  });
+  
+  
+  
   const brandHeading = document.createElement('h2');
   if (brand) {
     brandHeading.textContent = `Products for ${brand}`;
@@ -418,6 +479,41 @@ sortVal.addEventListener('change', async () => {
   
   setCurrentProducts(products);
   render(currentProducts, filteredproduct, selectBrand.value);
+});
+
+
+favCheckbox.addEventListener('change', async(event) => {
+  if (event.currentTarget.checked) {
+	  loading();
+	  let products = await fetchfavorit(favList);
+	  setCurrentProducts(products);
+  
+	  const filteredproduct = await getfilteredproduct(
+		selectBrand.value,
+		recentCheckbox.checked,
+		priceCheckbox.checked,
+		sortVal.value);
+	  
+	  render(products, filteredproduct);
+  }else {
+	  loading ();
+		let products = await getmaxproduct(
+		selectedpage,
+		selectShow.value,
+		selectBrand.value,
+		recentCheckbox.checked,
+		priceCheckbox.checked,
+		sortVal.value
+		);
+		
+		const filteredproduct = await getfilteredproduct(
+			selectBrand.value,
+			recentCheckbox.checked,
+			priceCheckbox.checked,
+			sortVal.value);
+		 setCurrentProducts(products);
+		 render(currentProducts, filteredproduct, selectBrand.value);
+  }
 });
 
 function filterRecentResults(data) {

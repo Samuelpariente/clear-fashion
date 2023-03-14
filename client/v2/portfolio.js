@@ -38,6 +38,8 @@ const p90 = document.querySelector("#p90");
 const p95 = document.querySelector("#p95");
 const last = document.querySelector("#last");
 
+
+
 /**
  * Set global value
  * @param {Array} result - products to display
@@ -178,8 +180,8 @@ const renderProducts = products => {
         <span>${product.brand}</span>
         <a target="_blank" href="${product.link}">${product.name}</a>
         <span>${product.price} €</span>
-		<label>
-			<input type="checkbox" name="fav" id=${product.uuid}>
+		<label for = "heart">
+			<input type="checkbox" name="fav" id=$check-{product.uuid}>
 			<span class="heart"></span>
 		 </label>
       </div>
@@ -214,6 +216,12 @@ const renderPagination = filteredproducts => {
  * Render page selector
  * @param  {Object} pagination
  */
+ let favList = [];
+ try{
+	 favList = JSON.parse(localStorage.getItem("favList"));
+	}
+ catch(error){}
+ 
 const renderIndicators = products => {
   const count = products.result.length;
   spanNbProducts.innerHTML = count;
@@ -236,6 +244,7 @@ const render = (products, filteredproduct, brand) => {
   renderProducts(products);
   renderPagination(filteredproduct);
   renderIndicators(filteredproduct);
+  
   const brandHeading = document.createElement('h2');
   if (brand) {
     brandHeading.textContent = `Products for ${brand}`;
@@ -410,6 +419,9 @@ sortVal.addEventListener('change', async () => {
   setCurrentProducts(products);
   render(currentProducts, filteredproduct, selectBrand.value);
 });
+
+
+
 
 function filterRecentResults(data) {
   const { result, meta } = data; // extract the result array and meta object from the input object

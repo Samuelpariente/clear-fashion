@@ -25,10 +25,11 @@ app.get('/', (request, response) => {
   
 });
 
-
+const pass = process.env.mdp;
+console.log(pass);
 app.get('/brands', async (request, response) => {
   try{
-	  const uri = 'mongodb+srv://samuel:R2WkLjmO9ENfMtMw@clearfashion.dv6hbxy.mongodb.net/?retryWrites=true&w=majority';
+	  const uri = `mongodb+srv://samuel:${pass}@clearfashion.dv6hbxy.mongodb.net/?retryWrites=true&w=majority`;
 	  const MONGODB_DB_NAME = 'clearfashion';
 	  const client = await MongoClient.connect(uri, {'useNewUrlParser': true});
 	  const db =  client.db(MONGODB_DB_NAME);
@@ -44,7 +45,7 @@ app.get('/brands', async (request, response) => {
 
 app.get('/products/search', async (request, response) => {
   try{
-	  const uri = 'mongodb+srv://samuel:R2WkLjmO9ENfMtMw@clearfashion.dv6hbxy.mongodb.net/?retryWrites=true&w=majority';
+	  const uri = `mongodb+srv://samuel:${pass}@clearfashion.dv6hbxy.mongodb.net/?retryWrites=true&w=majority`;
 	  const MONGODB_DB_NAME = 'clearfashion';
 	  const client = await MongoClient.connect(uri, {'useNewUrlParser': true});
 	  const db =  client.db(MONGODB_DB_NAME);
@@ -76,7 +77,7 @@ app.get('/products/search', async (request, response) => {
 
 app.get('/products/:id', async (request, response) => {
   try{
-	  const uri = 'mongodb+srv://samuel:R2WkLjmO9ENfMtMw@clearfashion.dv6hbxy.mongodb.net/?retryWrites=true&w=majority';
+	  const uri = `mongodb+srv://samuel:${pass}@clearfashion.dv6hbxy.mongodb.net/?retryWrites=true&w=majority`;
 	  const MONGODB_DB_NAME = 'clearfashion';
 	  const client = await MongoClient.connect(uri, {'useNewUrlParser': true});
 	  const db =  client.db(MONGODB_DB_NAME);
