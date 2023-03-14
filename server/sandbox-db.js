@@ -9,6 +9,8 @@ const MONGODB_DB_NAME = 'clearfashion';
 
 const brands = ['Dedicated','Montlimart','Circle'];
 const brand = 'Dedicated';
+const pass = process.env.mdp;
+
 
 async function ToDatabase(products) {	
 
