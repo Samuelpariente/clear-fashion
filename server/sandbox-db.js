@@ -12,7 +12,7 @@ const brand = 'Dedicated';
 
 async function ToDatabase(products) {	
 
-	const uri = 'mongodb+srv://samuel:R2WkLjmO9ENfMtMw@clearfashion.dv6hbxy.mongodb.net/?retryWrites=true&w=majority';
+	const uri = `mongodb+srv://samuel:${pass}.dv6hbxy.mongodb.net/?retryWrites=true&w=majority`;
 	const MONGODB_DB_NAME = 'clearfashion';
 	const client = await MongoClient.connect(uri, {'useNewUrlParser': true});
 	const db =  client.db(MONGODB_DB_NAME);

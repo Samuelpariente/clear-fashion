@@ -26,7 +26,6 @@ app.get('/', (request, response) => {
 });
 
 const pass = process.env.mdp;
-console.log(pass);
 app.get('/brands', async (request, response) => {
   try{
 	  const uri = `mongodb+srv://samuel:${pass}@clearfashion.dv6hbxy.mongodb.net/?retryWrites=true&w=majority`;
