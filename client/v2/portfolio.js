@@ -14,6 +14,8 @@ This endpoint accepts the following optional query string parameters:
 
 GET https://clear-fashion-api.vercel.app/brands
 
+GET https://clear-fashion-rose.vercel.app/products/search?limit=10&brand=Dedicated&price=30
+
 Search for available brands list
 */
 
@@ -37,8 +39,7 @@ const p50 = document.querySelector("#p50");
 const p90 = document.querySelector("#p90");
 const p95 = document.querySelector("#p95");
 const last = document.querySelector("#last");
-
-
+const favCheckbox = document.querySelector('#favCheckbox');
 
 /**
  * Set global value
@@ -48,9 +49,8 @@ const last = document.querySelector("#last");
  
  
  
-const setCurrentProducts = ({result, meta}) => {
+const setCurrentProducts = ({result}) => {
   currentProducts = result;
-  currentPagination = meta;
 };
 
 /**
@@ -60,19 +60,27 @@ const setCurrentProducts = ({result, meta}) => {
  * @return {Object}
  */
  
- 
-const fetchProducts = async (page = 1, size = 12) => {
+const fetchProducts = async (limit = 12,brand,price) => {
   try {
-    let url = `https://clear-fashion-api.vercel.app?page=${page}&size=${size}`;
-    const response = await fetch(url);
-    const body = await response.json();
+	let url;
+	if(brand == undefined || brand == ""){
+		url = `https://clear-fashion-rose.vercel.app/products/search?limit=${limit}&price=${price}`;
+	}
+	if(price == undefined){
+		url = `https://clear-fashion-rose.vercel.app/products/search?limit=${limit}&brand=${brand}`;
 
-    if (body.success !== true) {
-      console.error(body);
-      return {currentProducts, currentPagination};
-    }
+	}
+	if((brand == undefined || brand == "")&& price==undefined){
+		url = `https://clear-fashion-rose.vercel.app/products/search?limit=${limit}`;
+	}
+	if((brand!== undefined && brand !== "") && price!==undefined) {
+		
+		url = `https://clear-fashion-rose.vercel.app/products/search?limit=${limit}&brand=${brand}&price=${price}`;
+	}
+	const response = await fetch(url);
+    const body = await response.json();
 	
-    return body.data;
+    return body;
 	
   } catch (error) {
     console.error(error);
@@ -81,18 +89,20 @@ const fetchProducts = async (page = 1, size = 12) => {
 };
 
 
-const getmaxproduct = async(page ,size , brand, recent, price,Val) => {
-	const max =  await fetchProducts(1,12);
-	const maxi = max.meta.count;
-	let products = await fetchProducts(1,maxi);
+const getmaxproduct = async(page,size,brand,recent,price,Val) => {
+	let products = [];
+	if (price == true){
+		products = await fetchProducts(10000,brand,50);
+	}else{
+		products = await fetchProducts(10000,brand);
+	}
+	
 	const toshowmin = page*size - size;
 	const toshowmax = page*size;
-	if (brand !== null && brand !== "") {
-		products = filterByBrand(products,brand);
-    }
+	
 	if(recent == true){
+			products = await fetchProducts(10000);
 			products =  filterRecentResults(products)
-			
 		}
 	
 	if(price == true){
@@ -116,20 +126,18 @@ const getmaxproduct = async(page ,size , brand, recent, price,Val) => {
 	};
 	
 const getfilteredproduct = async(brand, recent, price,Val) => {
-	const max =  await fetchProducts(1,12);
-	const maxi = max.meta.count;
-	let products = await fetchProducts(1,maxi);
-	if (brand !== null && brand !== "") {
-		products = filterByBrand(products,brand);
-    }
+	let products = [];
+	if (price == true){
+		products = await fetchProducts(10000,brand,50);
+	}else{
+		products = await fetchProducts(10000,brand);
+	}
+
 	if(recent == true){
 			products =  filterRecentResults(products)
 			
 		}
 	
-	if(price == true){
-		products = filterLowPriceResults(products);
-	}
 	if (Val == "price-asc"){
 		products = sortResultsByPriceAscending(products);
 	}
@@ -149,39 +157,70 @@ const getfilteredproduct = async(brand, recent, price,Val) => {
 
 const fetchBrands = async () => {
   try {
-    const response = await fetch('https://clear-fashion-api.vercel.app/brands');
-    const body = await response.json();
+    const response = await fetch('https://clear-fashion-rose.vercel.app/brands');
+	const body = await response.json();
 
-    if (body.success !== true) {
-      console.error(body);
-      return [];
-    }
-
-    return body.data;
+    return body;
   } catch (error) {
     console.error(error);
     return [];
   }
 };
 
+const fetchfavorit = async(listfav) =>{
+	let products = [];
+	try {
+	for (let i = 0; i < listfav.length; i++) {
+	 const response = await fetch(`https://clear-fashion-rose.vercel.app/products/${listfav[i]}`);
+	 const body = await response.json(); 
+     products.push(body.result);	 
+	}
+    
+
+    return products;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+	
+	
+}
+
 /**
  * Render list of products
  * @param  {Array} products
  */
  
+let favList = [];
+const pull = JSON.parse(localStorage.getItem("favList"));
+if (pull !=null){
+	favList = pull;
+}
  
 const renderProducts = products => {
   const fragment = document.createDocumentFragment();
   const div = document.createElement('div');
+  
+  
+  
   const template = products
-    .map(product => {
+    .map(product =>
+
+	{
+		let checkString = "";
+     if(favList.includes(`${product._id}`)){
+        checkString = "checked";
+     }
+		
+		
       return `
-      <div class="product" id=${product.uuid}>
+      <div class="product" id=ID-${product._id}>
+		<a><img src="${product.image}"></a>
         <span>${product.brand}</span>
         <a target="_blank" href="${product.link}">${product.name}</a>
         <span>${product.price} €</span>
-		<label for = "heart">
-			<input type="checkbox" name="fav" id=$check-{product.uuid}>
+		<label>
+			<input class="fav-heart" type="checkbox" name="fav" id=${product._id} ${checkString}>
 			<span class="heart"></span>
 		 </label>
       </div>
@@ -216,19 +255,10 @@ const renderPagination = filteredproducts => {
  * Render page selector
  * @param  {Object} pagination
  */
- let favList = [];
- try{
-	 favList = JSON.parse(localStorage.getItem("favList"));
-	}
- catch(error){}
- 
 const renderIndicators = products => {
   const count = products.result.length;
   spanNbProducts.innerHTML = count;
-  countRecent(count);
-  countbrand();
-  pvalue();
-  lastrelease();
+  indicator(products);
 };
 
 const renderBrandSelect = brands => {
@@ -244,6 +274,30 @@ const render = (products, filteredproduct, brand) => {
   renderProducts(products);
   renderPagination(filteredproduct);
   renderIndicators(filteredproduct);
+  const checkboxes = document.querySelectorAll('.fav-heart');
+  checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', event => {
+      const checkboxId = event.target.id;
+      if (event.currentTarget.checked) {favList.push(checkboxId);}
+      else{
+        let i = 0;
+        while (i < favList.length) {
+          if (favList[i] === checkboxId) {
+            favList.splice(i, 1);
+          } 
+          else {
+            ++i;
+          }
+        }
+      }
+      
+      
+      localStorage.setItem('favList', JSON.stringify(favList));
+	  console.log(favList);
+    });
+  });
+  
+  
   
   const brandHeading = document.createElement('h2');
   if (brand) {
@@ -258,9 +312,9 @@ const render = (products, filteredproduct, brand) => {
  */
 
  selectShow.addEventListener('change', async (event) => {
-	 
+	loading ();
   let products = await getmaxproduct(
-    currentPagination.currentPage,
+    selectedpage,
     parseInt(event.target.value),
     selectBrand.value,
 	recentCheckbox.checked,
@@ -268,7 +322,7 @@ const render = (products, filteredproduct, brand) => {
 	sortVal.value
   );
   
-  console.log(currentPagination);
+
   
   const filteredproduct = await getfilteredproduct(
     selectBrand.value,
@@ -285,6 +339,7 @@ const render = (products, filteredproduct, brand) => {
  * Select the page to display
  */
 selectPage.addEventListener('change', async (event) => {
+	loading ();
   const page = parseInt(event.target.value);
   selectedpage = page;
   let products = await getmaxproduct(
@@ -294,6 +349,8 @@ selectPage.addEventListener('change', async (event) => {
 	recentCheckbox.checked,
 	priceCheckbox.checked,
 	sortVal.value);
+
+
 
   const filteredproduct = await getfilteredproduct(
     selectBrand.value,
@@ -311,8 +368,9 @@ selectPage.addEventListener('change', async (event) => {
  */
 
 selectBrand.addEventListener('change', async (event) => {
+	loading ();
   let products = await getmaxproduct(
-    currentPagination.currentPage,
+    selectedpage,
     selectShow.value,
     event.target.value,
 	recentCheckbox.checked,
@@ -335,7 +393,9 @@ selectBrand.addEventListener('change', async (event) => {
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
+  loading ();
   let products = await fetchProducts();
+  
   setCurrentProducts(products);
   
   const filteredproduct = await getfilteredproduct(
@@ -358,9 +418,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
 recentCheckbox.addEventListener('click',async () => {
-	
+		loading();
 		let products = await getmaxproduct(
-		currentPagination.currentPage,
+		selectedpage,
 		selectShow.value,
 		selectBrand.value,
 		recentCheckbox.checked,
@@ -381,9 +441,9 @@ recentCheckbox.addEventListener('click',async () => {
 
 
 priceCheckbox.addEventListener('click',async () => {
-	
+		loading ();
 		let products = await getmaxproduct(
-		currentPagination.currentPage,
+		selectedpage,
 		selectShow.value,
 		selectBrand.value,
 		recentCheckbox.checked,
@@ -401,15 +461,16 @@ priceCheckbox.addEventListener('click',async () => {
 })
 
 sortVal.addEventListener('change', async () => {
-	 
+	 loading ();
     let products = await getmaxproduct(
-		currentPagination.currentPage,
+		selectedpage,
 		selectShow.value,
 		selectBrand.value,
 		recentCheckbox.checked,
 		priceCheckbox.checked,
 		sortVal.value
 		);
+		
 	const filteredproduct = await getfilteredproduct(
 		selectBrand.value,
 		recentCheckbox.checked,
@@ -421,18 +482,49 @@ sortVal.addEventListener('change', async () => {
 });
 
 
-
+favCheckbox.addEventListener('change', async(event) => {
+  if (event.currentTarget.checked) {
+	  loading();
+	  let products = await fetchfavorit(favList);
+	  setCurrentProducts(products);
+  
+	  const filteredproduct = await getfilteredproduct(
+		selectBrand.value,
+		recentCheckbox.checked,
+		priceCheckbox.checked,
+		sortVal.value);
+	  
+	  render(products, filteredproduct);
+  }else {
+	  loading ();
+		let products = await getmaxproduct(
+		selectedpage,
+		selectShow.value,
+		selectBrand.value,
+		recentCheckbox.checked,
+		priceCheckbox.checked,
+		sortVal.value
+		);
+		
+		const filteredproduct = await getfilteredproduct(
+			selectBrand.value,
+			recentCheckbox.checked,
+			priceCheckbox.checked,
+			sortVal.value);
+		 setCurrentProducts(products);
+		 render(currentProducts, filteredproduct, selectBrand.value);
+  }
+});
 
 function filterRecentResults(data) {
-  const { result, meta } = data; // extract the result array and meta object from the input object
-
+  const {result} = data; // extract the result array and meta object from the input object
   const twoWeeksAgo = Date.now() - (14 * 24 * 60 * 60 * 1000); // calculate timestamp for two weeks ago
   const recentResults = result.filter(item => {
-    const releasedTimestamp = Date.parse(item.released); // parse released date string to timestamp
+    const releasedTimestamp = Date.parse(item.date); // parse released date string to timestamp
     return releasedTimestamp >= twoWeeksAgo; // keep item if its released timestamp is within the past two weeks
   });
 
-  const filteredData = { result: recentResults, meta }; // create new object with filtered result array and original meta object
+  const filteredData = { result: recentResults}; // create new object with filtered result array and original meta object
 
   return filteredData;
 }
@@ -445,7 +537,7 @@ function filterLowPriceResults(data) {
     return item.price < 50; // keep item if its price is less than 50
   });
 
-  const filteredData = { result: lowPriceResults, meta }; // create new object with filtered result array and original meta object
+  const filteredData = { result: lowPriceResults}; // create new object with filtered result array and original meta object
 
   return filteredData;
 }
@@ -455,7 +547,7 @@ function sortResultsByPriceAscending(data) {
 
   const sortedResults = result.slice().sort((a, b) => a.price - b.price); // create a copy of the result array and sort it in ascending order of price
 
-  const sortedData = { result: sortedResults, meta }; // create new object with sorted result array and original meta object
+  const sortedData = { result: sortedResults}; // create new object with sorted result array and original meta object
 
   return sortedData;
 }
@@ -465,42 +557,40 @@ function sortResultsByPriceDescending(data) {
 
   const sortedResults = result.slice().sort((a, b) => b.price - a.price); // create a copy of the result array and sort it in descending order of price
 
-  const sortedData = { result: sortedResults, meta }; // create new object with sorted result array and original meta object
+  const sortedData = { result: sortedResults}; // create new object with sorted result array and original meta object
 
   return sortedData;
 }
 
 function sortResultsByDateAscending(data) {
-  const { result, meta } = data; // extract the result array and meta object from the input object
+  const { result} = data; // extract the result array and meta object from the input object
 
   const sortedResults = result.slice().sort((a, b) => {
-    const aDate = new Date(a.released);
-    const bDate = new Date(b.released);
+    const aDate = new Date(a.date);
+    const bDate = new Date(b.date);
     return aDate - bDate;
   }); // create a copy of the result array and sort it in ascending order of release date
 
-  const sortedData = { result: sortedResults, meta }; // create new object with sorted result array and original meta object
+  const sortedData = { result: sortedResults}; // create new object with sorted result array and original meta object
 
   return sortedData;
 }
 
 function sortResultsByDateDescending(data) {
-  const { result, meta } = data; // extract the result array and meta object from the input object
+  const { result} = data; // extract the result array and meta object from the input object
 
   const sortedResults = result.slice().sort((a, b) => {
-    const aDate = new Date(a.released);
-    const bDate = new Date(b.released);
+    const aDate = new Date(a.date);
+    const bDate = new Date(b.date);
     return bDate - aDate;
   }); // create a copy of the result array and sort it in descending order of release date
 
-  const sortedData = { result: sortedResults, meta }; // create new object with sorted result array and original meta object
+  const sortedData = { result: sortedResults}; // create new object with sorted result array and original meta object
 
   return sortedData;
 }
 
-async function countRecent(max){
-	const page = 1;
-	const products = await fetchProducts(page,max);
+async function countRecent(products){
 	const newproduct = filterRecentResults(products);
 	const len = newproduct.result.length;
 	newproduct.innerHTML = len;
@@ -516,16 +606,7 @@ async function countbrand(){
 	}
 }
 
-async function pvalue(){
-	const products = await fetchProducts(
-    currentPagination.currentPage,
-    selectShow.value,
-    selectBrand.value,
-	recentCheckbox.checked,
-	priceCheckbox.checked,
-	sortVal.value
-  );
-  
+async function pvalue(products){
 	const res = getPricePercentiles(products);
 	p50.innerHTML = res.percentiles.p50;
 	p90.innerHTML = res.percentiles.p90;
@@ -550,7 +631,7 @@ function getPricePercentiles(data) {
 
 function getLastReleasedProduct(data) {
   if (data.result.length !== 0){
-  const sortedProducts = data.result.slice().sort((a, b) => new Date(b.released) - new Date(a.released)); // create a sorted copy of the result array based on releaseDate
+  const sortedProducts = data.result.slice().sort((a, b) => new Date(b.date) - new Date(a.date)); // create a sorted copy of the result array based on releaseDate
   const latestRelease = sortedProducts[0]; // get the latest release from the sorted array
   return latestRelease;
   }
@@ -558,22 +639,17 @@ function getLastReleasedProduct(data) {
 }
 
 
-async function lastrelease(){
-	const filteredproduct = await getfilteredproduct(
-    selectBrand.value,
-	recentCheckbox.checked,
-	priceCheckbox.checked,
-	sortVal.value);
-	
+async function lastrelease(products){
+	const filteredproduct = products;
 	const latestRelease = getLastReleasedProduct(filteredproduct);
-	last.innerHTML  = latestRelease.released;
+	last.innerHTML  = new Date(latestRelease.date).toUTCString();
 	
 }
 
 function toshow(indmin, indmax, data){
-  const { result, meta } = data;
+  const { result} = data;
   const selectedP = result.slice(indmin,indmax);
-  const products = { result: selectedP, meta : meta }; // create new object with sorted result array and original meta object
+  const products = { result: selectedP}; // create new object with sorted result array and original meta object
   return products;
 }
 
@@ -582,3 +658,25 @@ function filterByBrand(input, brand) {
   return { result: filteredItems, meta: input.meta };
 }
 
+async function indicator(products){
+	lastrelease(products);
+	countRecent(products);
+	countbrand();
+	pvalue(products);
+}
+
+function loading (){
+  const fragment = document.createDocumentFragment();
+  const div = document.createElement('div');
+  const template = `
+  <div class="progress">
+  <div class="color"></div>
+</div>
+    `;
+
+
+  div.innerHTML = template;
+  fragment.appendChild(div);
+  sectionProducts.innerHTML = '';
+  sectionProducts.appendChild(fragment);
+};

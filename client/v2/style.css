@@ -132,14 +132,21 @@ section {
 }
 
 /* Product card styles */
+
 .product {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: grid;
+  grid-template-rows: auto 1fr auto; /* use grid layout to stack elements */
   margin-bottom: 20px;
-  padding: 10px; 
+  padding: 20px; 
   border: 1px solid #dcdcdc;
   border-radius: 5px;
+}
+
+.product img {
+  width: 100%; /* set image width to 100% of its container */
+  max-height: 250px; /* set a max-height for the image to avoid distortion */
+  object-fit: cover; /* set the image to cover the container while preserving its aspect ratio */
+  border-radius: 10px 10px 0 0; /* apply rounded corners to the top of the image */
 }
 
 .product span:first-child {
@@ -149,6 +156,8 @@ section {
 
 .product span{
   min-width: 45px; /* add margin to the right of the first child element */
+  align-items: center;
+  text-align: center;
 }
 
 
@@ -158,7 +167,9 @@ section {
   margin-left: 10px;
   min-width: 300px; /* add max-width */
   overflow: hidden; /* hide overflow */
-  text-overflow: ellipsis; /* add ellipsis for text that overflows */
+  text-overflow: ellipsis;
+	align-items: center;
+  text-align: center;  /* add ellipsis for text that overflows */
 }
 
 .product a:hover {
@@ -180,27 +191,7 @@ section {
   content: "\2665";
   color: #f44336;
 }
-In this example, I've added a max-width property of 150px to the a element, which limits the
 
-
-
-
-.product input[type="checkbox"] {
-  display: none;
-  margin-right: 20px; /* add margin to the right of the checkbox */
-}
-
-.product .heart:before {
-  content: "\2661";
-  font-size: 24px;
-  color: black;
-  margin-left: 20px; /* add margin to the left of the heart icon */
-}
-
-.product input[type="checkbox"]:checked + .heart:before {
-  content: "\2665";
-  color: #f44336;
-}
 
 
 
@@ -218,3 +209,37 @@ button {
 button:hover {
   background-color: #666;
 }
+
+
+.progress{
+    position: relative;
+    height: 10px;
+    width: 300%;
+    border: 1px solid #666;
+    border-radius: 15px;
+}
+.progress .color{
+    position: absolute;
+    background-color: #000;
+    width: 0px;
+    height: 10px;
+    border-radius: 15px;
+    animation: progres 4s infinite linear;    
+}
+@keyframes progres{
+    0%{
+      width: 0%;
+    }
+    25%{
+        width: 50%;
+    }
+    50%{
+        width: 75%;
+    }
+    75%{
+        width: 85%;
+    }
+    100%{
+        width: 100%;
+    }
+};
